@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import NewModal from './NewModal';
 import { List } from 'react-content-loader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 
 const Events = ({token}) => {
 
@@ -38,8 +40,8 @@ const Events = ({token}) => {
 				<button className="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-tab-pane" type="button"
 					role="tab" aria-controls="past-tab-pane" aria-selected="false">Past</button>
 			</li>
-			<li className="nav-item" role="presentation">
-			<button className='btn btn-outline-secondary' onClick={loadData}>Refresh</button>
+			<li className="nav-item" role="presentation" style={{marginLeft: 'auto'}}>
+				<button className='btn' onClick={loadData}><FontAwesomeIcon icon={faRefresh}/></button>
 			</li>
 		</ul>
 		<div className="tab-content border p-4" id="myTabContent">

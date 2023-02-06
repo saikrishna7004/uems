@@ -2,14 +2,36 @@ import { faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'
+import NewModal from './NewModal'
+import { useState } from 'react'
 
 const Reports = ({token, loginUser}) => {
+
+    function truncateWords(text, maxWords) {
+        let truncatedText = text.split(" ").slice(0, maxWords).join(" ");
+        if (text.split(" ").length > maxWords) {
+          truncatedText += "...";
+        }
+        return truncatedText;
+    }
 
     const navigate = useNavigate()
 
     if(!token){
         navigate('/login')
     }
+
+	const [events, setEvents] = useState([])
+	
+	useEffect(() => {
+        if(!token) return
+		fetch('/api/event/reports', {headers: {'Authorization': token}}).then(data=>data.json()).then(data=>{
+			setEvents(data.data)
+		}).catch(e=>{
+            console.log(e)
+            setEvents([])
+        })
+	}, [token])
 
 	if(!loginUser.role) return (<div>Not allowed</div>);
 
@@ -68,31 +90,16 @@ const Reports = ({token, loginUser}) => {
                 </thead>
                 <tbody>
                     {
-                        [1, 2, 3].map((e, i) => {
+                        events.map((e, i) => {
                             return <tr key={i}>
                                 <th scope="row">{i + 1}</th>
-                                <td>Event {e}</td>
-                                <td>Meeting</td>
-                                <td className="desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex repudiandae odit, pariatur velit ipsam sed voluptas quisquam quae maxime fuga nemo enim ad autem tempore non! Velit deleniti animi exercitationem.</td>
+                                <td>{e.title}</td>
+                                <td>{['Not Selected', 'General', 'Meeting', 'Fest', 'Workshop'][e.type]}</td>
+                                <td className="desc">{truncateWords(e.desc)}</td>
                                 <td>
-                                    <button className="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target={'#myModalNew' + i}><FontAwesomeIcon icon={faInfoCircle}/> Details</button>
+                                    <button className="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target={'#myModal' + e._id}><FontAwesomeIcon icon={faInfoCircle}/> Details</button>
                                     <button className="btn btn-success m-1"><FontAwesomeIcon icon={faDownload}/> Download</button>
-                                    <div className="modal fade" id={'myModalNew' + i} tabIndex="-1" aria-labelledby={"exampleModalLabel" + i} aria-hidden="true">
-                                        <div className="modal-dialog modal-xl modal-dialog-scrollable">
-                                            <div className="modal-content">
-                                                <div className="modal-header">
-                                                    <h1 className="modal-title fs-5" id={"exampleModalLabel" + i}>Event {e}</h1>
-                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div className="modal-body">
-                                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi praesentium recusandae rem hic accusantium aliquid quis! Sequi natus, soluta harum quas debitis, accusamus quia nulla porro vero placeat possimus ullam!
-                                                </div>
-                                                <div className="modal-footer">
-                                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <NewModal data={e}/>
                                 </td>
                             </tr>
                         })

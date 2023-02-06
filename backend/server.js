@@ -112,6 +112,19 @@ app.get('/api/event/requests', async (req, res) => {
     }
 });
 
+app.get('/api/event/reports', async (req, res) => {
+    // if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorised' });
+    try {
+        let user = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)
+        if(!user) return res.status(401).json({ message: 'Unauthorised' });
+        let data = await Event.find()
+        return res.status(200).json({ data, success: true });    
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ message: error.message, success: false });
+    }
+});
+
 app.post('/api/event/requests/status', async (req, res) => {
     console.log(req.body)
     if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorised' });
