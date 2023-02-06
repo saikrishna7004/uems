@@ -74,9 +74,9 @@ function App() {
 			<Route exact path="/" element={<Home token={token} />}/>
 			<Route exact path="/events" element={<Events token={token} />}/>
 			<Route exact path="/login" element={<Login token={token} setToken={setToken} />}/>
-			<Route exact path="/requests" element={<Requests token={token} />}/>
+			<Route exact path="/requests" element={<Requests token={token} loginUser={loginUser} />}/>
 			<Route exact path="/schedule" element={<Schedule token={token} />}/>
-			<Route exact path="/reports" element={<Reports token={token} />}/>
+			<Route exact path="/reports" element={<Reports token={token} loginUser={loginUser} />}/>
 			<Route exact path="/aboutus" element={<AboutUs token={token} />}/>
 			<Route exact path="/logout" element={<Logout
 				to={{

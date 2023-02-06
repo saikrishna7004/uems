@@ -1,15 +1,17 @@
 import { faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useNavigate } from 'react-router-dom'
 
-const Reports = () => {
+const Reports = ({token, loginUser}) => {
 
-    useEffect(() => {
-        for (const ele of document.getElementsByClassName('desc')) {
-            ele.innerHTML = ele.innerHTML.substring(0, 30) + '...';
-        }
-    }, [])
-    
+    const navigate = useNavigate()
+
+    if(!token){
+        navigate('/login')
+    }
+
+	if(!loginUser.role) return (<div>Not allowed</div>);
 
     return <div className="container my-4">
         <h2 className="my-4">Filter Reports</h2>

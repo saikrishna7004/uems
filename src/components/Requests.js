@@ -1,20 +1,28 @@
 import React from 'react'
-import Card from './Card'
 import 'bootstrap/js/dist/modal';
 import 'bootstrap/js/dist/tab';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import NewModal from './NewModal';
+import { useNavigate } from 'react-router-dom';
 
-const Requests = ({token}) => {
+const Requests = ({token, loginUser}) => {
+
+    const navigate = useNavigate()
+
+    if(!token){
+        navigate('/login')
+    }
 
 	const [events, setEvents] = useState([])
-
+	
 	useEffect(() => {
-		fetch('/api/event/requests').then(data=>data.json()).then(data=>{
+		fetch('/api/event/requests', {headers: {'Authorization': token}}).then(data=>data.json()).then(data=>{
 			setEvents(data.data.reverse())
 		}).catch(e=>console.log(e))
 	}, [])
+	
+	if(!loginUser.role || !(loginUser.role==1 || loginUser.role==2)) return (<div>Not allowed</div>);
 
 	const eventStatusUpdate = (e, i, index)=>{
 		fetch('/api/event/requests/status', {

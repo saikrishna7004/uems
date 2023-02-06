@@ -11,7 +11,8 @@ const Login = ({token, setToken}) => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        if(token) navigate(-1)
+        console.log(localStorage.getItem('token'))
+        if(!localStorage.getItem('token')) navigate('/login')
     }, [])
     
 

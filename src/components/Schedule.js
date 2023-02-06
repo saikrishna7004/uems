@@ -44,7 +44,8 @@ const Schedule = ({token}) => {
 		fetch('/api/event', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+                'Authorization': token
 			},
 			body: JSON.stringify({
 				...newEvents

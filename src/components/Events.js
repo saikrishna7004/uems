@@ -4,15 +4,24 @@ import 'bootstrap/js/dist/tab';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import NewModal from './NewModal';
+import { List } from 'react-content-loader'
 
 const Events = ({token}) => {
 
 	const [events, setEvents] = useState([])
+	const [loading, setLoading] = useState(false)
 
-	useEffect(() => {
+	const loadData = ()=>{
+		setLoading(true)
+		setEvents([])
 		fetch('/api/event').then(data=>data.json()).then(data=>{
 			setEvents(data.data.reverse().filter((e)=>e.status==2))
-		}).catch(e=>console.log(e))
+			setLoading(false)
+		}).catch(e=>{console.log(e); setLoading(false)})
+	}
+
+	useEffect(() => {
+		loadData()
 	}, [])
 
 	return <div className="container my-3">
@@ -28,6 +37,9 @@ const Events = ({token}) => {
 			<li className="nav-item" role="presentation">
 				<button className="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-tab-pane" type="button"
 					role="tab" aria-controls="past-tab-pane" aria-selected="false">Past</button>
+			</li>
+			<li className="nav-item" role="presentation">
+			<button className='btn btn-outline-secondary' onClick={loadData}>Refresh</button>
 			</li>
 		</ul>
 		<div className="tab-content border p-4" id="myTabContent">
@@ -47,22 +59,15 @@ const Events = ({token}) => {
 					})
 				}
 				{
-					events.length==0 && <>No events to display</>
+					!loading && events.length==0 && <>No events to display</>
 				}
+				{loading && <List />}
 			</div>
 			<div className="tab-pane fade" id="upcomming-tab-pane" role="tabpanel" aria-labelledby="upcomming-tab" tabIndex="0">
-				{/* {
-					[5, 6].map((e, i)=>{
-						return <Card id={e} key={e+i} title={'Event Test '+e} desc='With supporting text below as a natural lead-in to additional content.' desc1='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus vitae ratione harum, magnam sint et quis iure dolor! Ea incidunt debitis numquam, eius non odit vero fugit impedit cupiditate reiciendis reprehenderit fuga, doloribus beatae, esse repellendus? Cum odio commodi sunt, hic, in voluptates dolorum ut facere similique tenetur accusamus quaerat dolores facilis! Optio a non provident laboriosam explicabo ipsa mollitia voluptas inventore eos atque. Quisquam sint suscipit quod commodi exercitationem eum aliquid asperiores maiores, quasi velit, quo qui vel officia ad doloremque illum, eligendi magnam? Ea consectetur nostrum ipsam ipsa odio veniam tenetur at distinctio explicabo. Facere ullam beatae laboriosam.' />
-					})
-				} */}
+				
 			</div>
 			<div className="tab-pane fade" id="past-tab-pane" role="tabpanel" aria-labelledby="past-tab" tabIndex="0">
-				{/* {
-					[7, 8, 9].map((e, i)=>{
-						return <Card id={e} key={e+i} title={'Event Test '+e} desc='With supporting text below as a natural lead-in to additional content.' desc1='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus vitae ratione harum, magnam sint et quis iure dolor! Ea incidunt debitis numquam, eius non odit vero fugit impedit cupiditate reiciendis reprehenderit fuga, doloribus beatae, esse repellendus? Cum odio commodi sunt, hic, in voluptates dolorum ut facere similique tenetur accusamus quaerat dolores facilis! Optio a non provident laboriosam explicabo ipsa mollitia voluptas inventore eos atque. Quisquam sint suscipit quod commodi exercitationem eum aliquid asperiores maiores, quasi velit, quo qui vel officia ad doloremque illum, eligendi magnam? Ea consectetur nostrum ipsam ipsa odio veniam tenetur at distinctio explicabo. Facere ullam beatae laboriosam.' />
-					})
-				} */}
+				
 			</div>
 		</div>
 	</div>

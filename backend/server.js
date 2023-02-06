@@ -23,6 +23,8 @@ app.get('/', async (req, res)=>{
 
 app.post('/new', async (req, res)=>{
     try {
+        let user1 = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)
+        if(!user1) return res.status(401).json({ message: 'Unauthorised' });
         let salt = await bcryptjs.genSalt(10)
         let passwordEncrypted = await bcryptjs.hash(req.body.password, salt)
         let user = await User({...req.body, password: passwordEncrypted})
@@ -31,10 +33,13 @@ app.post('/new', async (req, res)=>{
     } catch (error) {
         console.log(error.message)
         let keyRepeated = 'Field'
-        if(error.keyValue.username) keyRepeated = 'Username'
-        else if(error.keyValue.email) keyRepeated = 'Email'
-        console.log(keyRepeated)
-        if(error.code==11000) return res.status(403).json({message: keyRepeated + ' already exists'})
+        if(error.keyValue){
+            if(error.keyValue.username) keyRepeated = 'Username'
+            else if(error.keyValue.email) keyRepeated = 'Email'
+            console.log(keyRepeated)
+            if(error.code==11000) return res.status(403).json({message: keyRepeated + ' already exists'})
+        }
+        if(error.message=='jwt must be provided') return res.status(401).json({message: 'Unauthorised'})
         return res.status(500).json({message: 'Internal server error'})
     }
 })
@@ -95,7 +100,10 @@ app.get('/api/event', async (req, res) => {
 });
 
 app.get('/api/event/requests', async (req, res) => {
+    if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorised' });
     try {
+        let user = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)
+        if(!user) return res.status(401).json({ message: 'Unauthorised' });
         let data = await Event.find({$or:[ {status: 1}, {status: 3}]})
         return res.status(200).json({ data, success: true });    
     } catch (error) {
@@ -106,7 +114,10 @@ app.get('/api/event/requests', async (req, res) => {
 
 app.post('/api/event/requests/status', async (req, res) => {
     console.log(req.body)
+    if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorised' });
     try {
+        let user = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)
+        if(!user) return res.status(401).json({ message: 'Unauthorised' });
         let data = await Event.findOne({_id: req.body.e})
         data.status = req.body.i
         data.save()
@@ -118,7 +129,10 @@ app.post('/api/event/requests/status', async (req, res) => {
 });
 
 app.post('/api/event', async (req, res) => {
+    if(!req.headers.authorization) return res.status(401).json({ message: 'Unauthorised' });
     try {
+        let user = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)
+        if(!user) return res.status(401).json({ message: 'Unauthorised' });
         let event = await Event(req.body)
         event.save()
         console.log(event)
