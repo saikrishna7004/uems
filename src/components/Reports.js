@@ -1,39 +1,48 @@
 import { faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import React, { useEffect } from 'react'
+import ReactDOM from 'react-dom/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'
 import NewModal from './NewModal'
 import { useState } from 'react'
 
-const Reports = ({token, loginUser}) => {
+const Reports = ({ token, loginUser }) => {
 
     function truncateWords(text, maxWords) {
         let truncatedText = text.split(" ").slice(0, maxWords).join(" ");
         if (text.split(" ").length > maxWords) {
-          truncatedText += "...";
+            truncatedText += "...";
         }
         return truncatedText;
     }
 
     const navigate = useNavigate()
 
-    if(!token){
+    if (!token) {
         navigate('/login')
     }
 
-	const [events, setEvents] = useState([])
-	
-	useEffect(() => {
-        if(!token) return
-		fetch('/api/event/reports', {headers: {'Authorization': token}}).then(data=>data.json()).then(data=>{
-			setEvents(data.data)
-		}).catch(e=>{
+    const [events, setEvents] = useState([])
+
+    useEffect(() => {
+        if (!token) return
+        fetch('/api/event/reports', { headers: { 'Authorization': token } }).then(data => data.json()).then(data => {
+            setEvents(data.data)
+        }).catch(e => {
             console.log(e)
             setEvents([])
         })
-	}, [token])
+    }, [token])
 
-	if(!loginUser.role) return (<div>Not allowed</div>);
+    const handleDownload = async (e, i) => {
+        let newWindow = window.open('', i, 'resizable=yes,status=0,toolbar=0,scrollbars=1')
+
+        const root = await ReactDOM.createRoot(newWindow.document.body);
+        await root.render(<>Hello</>);
+        console.log("Gello")
+    }
+
+    if (!loginUser.role) return (<div>Not allowed</div>);
 
     return <div className="container my-4">
         <h2 className="my-4">Filter Reports</h2>
@@ -97,9 +106,9 @@ const Reports = ({token, loginUser}) => {
                                 <td>{['Not Selected', 'General', 'Meeting', 'Fest', 'Workshop'][e.type]}</td>
                                 <td className="desc">{truncateWords(e.desc)}</td>
                                 <td>
-                                    <button className="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target={'#myModal' + e._id}><FontAwesomeIcon icon={faInfoCircle}/> Details</button>
-                                    <button className="btn btn-success m-1"><FontAwesomeIcon icon={faDownload}/> Download</button>
-                                    <NewModal data={e}/>
+                                    <button className="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target={'#myModal' + e._id}><FontAwesomeIcon icon={faInfoCircle} /> Details</button>
+                                    <button className="btn btn-success m-1" onClick={() => handleDownload(e, i)}><FontAwesomeIcon icon={faDownload} /> Download</button>
+                                    <NewModal data={e} />
                                 </td>
                             </tr>
                         })
