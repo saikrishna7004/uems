@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'
 import NewModal from './NewModal'
 import { useState } from 'react'
+import PDF from './PDF'
 
 const Reports = ({ token, loginUser }) => {
 
@@ -36,10 +37,11 @@ const Reports = ({ token, loginUser }) => {
 
     const handleDownload = async (e, i) => {
         let newWindow = window.open('', i, 'resizable=yes,status=0,toolbar=0,scrollbars=1')
-
-        const root = await ReactDOM.createRoot(newWindow.document.body);
-        await root.render(<>Hello</>);
-        console.log("Gello")
+        await newWindow.document.write(`<html><head><title>${e.title}</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"></head><body></body>`)
+        newWindow.document.body.innerHTML = `<div id="root"></div>`
+        const root = await ReactDOM.createRoot(newWindow.document.getElementById('root'));
+        await root.render(<PDF data={e} />);
+        newWindow.print()
     }
 
     if (!loginUser.role) return (<div>Not allowed</div>);
