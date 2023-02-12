@@ -10,13 +10,15 @@ import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 
 const Events = ({token}) => {
 
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
+	
 	const [events, setEvents] = useState([])
 	const [loading, setLoading] = useState(false)
 
 	const loadData = ()=>{
 		setLoading(true)
 		setEvents([])
-		fetch('/api/event').then(data=>data.json()).then(data=>{
+		fetch(BACKEND_URL+'/api/event').then(data=>data.json()).then(data=>{
 			setEvents(data.data.reverse().filter((e)=>e.status==2))
 			setLoading(false)
 		}).catch(e=>{console.log(e); setLoading(false)})

@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 
 function App() {
 
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
 	
 	const [token, setToken] = useState('')
 	const [loginUser, setLoginUser] = useState({})
@@ -36,7 +37,7 @@ function App() {
 		if (token) {
 			async function test() {
 				try {
-					let res = await fetch('/api/verify', {
+					let res = await fetch(BACKEND_URL+'/api/verify', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'

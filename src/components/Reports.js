@@ -9,6 +9,8 @@ import PDF from './PDF'
 
 const Reports = ({ token, loginUser }) => {
 
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
+	
     function truncateWords(text, maxWords) {
         let truncatedText = text.split(" ").slice(0, maxWords).join(" ");
         if (text.split(" ").length > maxWords) {
@@ -27,7 +29,7 @@ const Reports = ({ token, loginUser }) => {
 
     useEffect(() => {
         if (!token) return
-        fetch('/api/event/reports', { headers: { 'Authorization': token } }).then(data => data.json()).then(data => {
+        fetch(BACKEND_URL+'/api/event/reports', { headers: { 'Authorization': token } }).then(data => data.json()).then(data => {
             setEvents(data.data)
         }).catch(e => {
             console.log(e)

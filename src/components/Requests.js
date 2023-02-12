@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Requests = ({token, loginUser}) => {
 
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
+	
     const navigate = useNavigate()
 
     if(!token){
@@ -17,7 +19,7 @@ const Requests = ({token, loginUser}) => {
 	const [events, setEvents] = useState([])
 	
 	useEffect(() => {
-		fetch('/api/event/requests', {headers: {'Authorization': token}}).then(data=>data.json()).then(data=>{
+		fetch(BACKEND_URL+'/api/event/requests', {headers: {'Authorization': token}}).then(data=>data.json()).then(data=>{
 			setEvents(data.data.reverse())
 		}).catch(e=>console.log(e))
 	}, [])
@@ -25,7 +27,7 @@ const Requests = ({token, loginUser}) => {
 	if(!loginUser.role || !(loginUser.role==1 || loginUser.role==2)) return (<div>Not allowed</div>);
 
 	const eventStatusUpdate = (e, i, index)=>{
-		fetch('/api/event/requests/status', {
+		fetch(BACKEND_URL+'/api/event/requests/status', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

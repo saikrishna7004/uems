@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 
 const Schedule = ({token}) => {
 
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
+	
     const navigate = useNavigate()
 
     if(!token){
@@ -41,7 +43,7 @@ const Schedule = ({token}) => {
         }
         newEvents.items = newItems
         delete newEvents.itemsCount
-		fetch('/api/event', {
+		fetch(BACKEND_URL+'/api/event', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

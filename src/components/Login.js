@@ -10,6 +10,8 @@ const Login = ({token, setToken}) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     
+	const BACKEND_URL = process.env.NODE_ENV=="development"?"":"https://uems-usdl.onrender.com"
+	
     useEffect(() => {
         console.log(localStorage.getItem('token'))
         if(!localStorage.getItem('token')) navigate('/login')
@@ -20,7 +22,7 @@ const Login = ({token, setToken}) => {
         e.preventDefault();
         try {
             // console.log(username, password)
-            const response = await fetch('/api/login', {
+            const response = await fetch(BACKEND_URL+'/api/login', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
